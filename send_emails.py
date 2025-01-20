@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import smtplib
 from email.mime.text import MIMEText
@@ -32,26 +33,7 @@ df['Fullname'] = df['Fullname'].apply(clean_text)
 df_filtered = df[['Fullname', 'Followers', 'Public Email']]
 
 def generate_email_content(row):
-    email_template = f"""
-    Hi {row['Fullname']},
-
-    I’m Taabish, founder of an app called Flencr.
-
-    Our app lets you earn by creating a chatbot clone of you to serve as an AI girlfriend to your male followers.
-
-    Followers pay a monthly subscription fee of your choice to have access to talk to your AI chatbot clone.
-
-    So if you’re always getting random DMs from guys, I think it’s actually a good opportunity to monetise this. It will text and reply to those kind of guys on your behalf without you having to do anything.
-
-    Based on your {row['Followers']} followers count, even if 1% subscribe and pay $5 a month, that’s a neat ${int(row['Followers'] * 0.01 * 5)} monthly income! OnlyFans-like money without any of the effort, stigma or explicit content.
-
-    If this is something of interest to you, you can get started at flencr.com where you can also find more information.
-
-    Let me know if you have any questions!
-
-    Have a good day :)
-    Taabish
-    """
+    email_template = os.getenv('EMAIL_CONTENT')
     return email_template
 
 df_filtered['email_content'] = df_filtered.apply(generate_email_content, axis=1)
@@ -60,8 +42,8 @@ df_filtered['email_content'] = df_filtered.apply(generate_email_content, axis=1)
 smtp_server = 'smtp.mail.me.com'  # iCloud SMTP server
 smtp_port = 587  # Port number
 email_address = 'taabish@flencr.com'  # Your iCloud email address
-primary_email = 'taabish_khan22@hotmail.co.uk'  # Your primary email address
-email_password = 'tmze-ydem-nhgk-ofwp'  # Your iCloud email password
+primary_email = os.getenv('EMAIL_ADDRESS')  # Your primary email address
+email_password = os.getenv('EMAIL_PASSWORD')  # Your iCloud email password
 
 def send_email(to_address, subject, content):
     msg = MIMEMultipart()
